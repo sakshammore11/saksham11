@@ -1,0 +1,27 @@
+name: Daily Contribution Filler
+
+on:
+  schedule:
+    - cron: '0 0,12 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Make automatic daily commit
+        run: |
+          git config --global user.name "sakshammore11"
+          git config --global user.email "237561937+sakshammore11@users.noreply.github.com"
+          echo "{\"last_updated\": \"$(date -u +'%Y-%m-%dT%H:%M:%SZ')\"}" > data.json
+          git add data.json
+          git commit -m "Auto daily update: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" || echo "No changes to commit"
+          git push
